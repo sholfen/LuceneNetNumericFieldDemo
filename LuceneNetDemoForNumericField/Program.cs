@@ -22,7 +22,13 @@ namespace LuceneNetDemoForNumericField
     {
         static void Main(string[] args)
         {
+            List<Product> list = new List<Product>();
+            list.Add(new Product { ProductName = "HTC ONE", Price = 99 });
+            list.Add(new Product { ProductName = "Apple iPhone 6", Price = 799 });
+            list.Add(new Product { ProductName = "Apple iPhone 6 Plus", Price = 899 });
 
+            IndexItems(list);
+            SearchItems(300, 1000);
         }
 
         static void IndexItems(List<Product> list)
@@ -31,7 +37,7 @@ namespace LuceneNetDemoForNumericField
             IndexWriter indexWriter = new IndexWriter(
                 directory,
                 new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
-                false,
+                true,
                 IndexWriter.MaxFieldLength.LIMITED);
 
             foreach (Product product in list)
@@ -41,6 +47,7 @@ namespace LuceneNetDemoForNumericField
                 Field productName = new Field("ProductName", product.ProductName, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
                 doc.Add(productName);
                 NumericField price = new NumericField("Price", Field.Store.YES, true);
+                price.SetIntValue(product.Price);
                 doc.Add(price);
 
                 indexWriter.AddDocument(doc);
@@ -63,9 +70,7 @@ namespace LuceneNetDemoForNumericField
                 Console.WriteLine(doc.Get("ProductName"));
                 Console.WriteLine(doc.Get("Price"));
                 Console.WriteLine();
-
-
-            }
+            } 
         }
     }
 }
